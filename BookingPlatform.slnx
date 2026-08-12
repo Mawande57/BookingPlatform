@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="BookingPlatform.Api/BookingPlatform.Api.csproj" />
+  <Project Path="BookingPlatform.Application/BookingPlatform.Application.csproj" />
+  <Project Path="BookingPlatform.Domain/BookingPlatform.Domain.csproj" />
+  <Project Path="BookingPlatform.Infrastructure/BookingPlatform.Infrastructure.csproj" />
+</Solution>
