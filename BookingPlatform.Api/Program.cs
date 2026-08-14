@@ -82,7 +82,7 @@ app.MapScalarApiReference(options =>
     options.EnableDarkMode();
 });
 
-app.UseHttpsRedirection();                            // 3. force HTTPS early
+                           // 3. force HTTPS early
 app.UseCors("AllowAll");                               // 3.5 allow cross-origin requests
 app.UseAuthentication();                              // 4. who is calling?
 app.UseAuthorization();                               // 5. what are they allowed to do?
