@@ -66,14 +66,13 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();   // 1. catch everything first
 
-if (app.Environment.IsDevelopment())                 // 2. dev-only tools
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference(options =>
+
+app.MapOpenApi();
+app.MapScalarApiReference(options =>
     {
         options.EnableDarkMode();
     });
-}
+
 
 app.UseHttpsRedirection();                            // 3. force HTTPS early
 
