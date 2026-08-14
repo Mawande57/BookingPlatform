@@ -27,6 +27,16 @@ builder.Host.UseSerilog();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -66,16 +76,14 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();   // 1. catch everything first
 
-
 app.MapOpenApi();
 app.MapScalarApiReference(options =>
-    {
-        options.EnableDarkMode();
-    });
-
+{
+    options.EnableDarkMode();
+});
 
 app.UseHttpsRedirection();                            // 3. force HTTPS early
-
+app.UseCors("AllowAll");                               // 3.5 allow cross-origin requests
 app.UseAuthentication();                              // 4. who is calling?
 app.UseAuthorization();                               // 5. what are they allowed to do?
 
