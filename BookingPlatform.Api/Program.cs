@@ -13,6 +13,7 @@ using BookingPlatform.Infrastructure.Catalog;
 using BookingPlatform.Infrastructure.Bookings;
 using BookingPlatform.Infrastructure.Reviews;
 using Serilog;
+using Microsoft.OpenApi.Models;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -24,7 +25,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog();
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Servers = new List<Microsoft.OpenApi.Models.OpenApiServer>
+        {
+            new() { Url = "https://bookingplatform-m9a9.onrender.com" }
+        };
+        return Task.CompletedTask;
+    });
+});
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
