@@ -1,19 +1,22 @@
+using BookingPlatform.Api.Middleware;
 using BookingPlatform.Application.Interfaces;
 using BookingPlatform.Infrastructure.Auth;
-using BookingPlatform.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Scalar.AspNetCore;
-using BookingPlatform.Api.Middleware;
-using BookingPlatform.Infrastructure.Services;
-using BookingPlatform.Infrastructure.Scheduling;
-using BookingPlatform.Infrastructure.Catalog;
 using BookingPlatform.Infrastructure.Bookings;
+using BookingPlatform.Infrastructure.Catalog;
+using BookingPlatform.Infrastructure.Data;
 using BookingPlatform.Infrastructure.Reviews;
+using BookingPlatform.Infrastructure.Scheduling;
+using BookingPlatform.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 using Serilog;
-using Microsoft.OpenApi.Models;
+using System.Text;
+
+
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -29,7 +32,7 @@ builder.Services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        document.Servers = new List<Microsoft.OpenApi.Models.OpenApiServer>
+        document.Servers = new List<OpenApiServer>
         {
             new() { Url = "https://bookingplatform-m9a9.onrender.com" }
         };
@@ -82,7 +85,10 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 // --- Middleware pipeline, order matters below ---
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();   // 1. catch everything first
